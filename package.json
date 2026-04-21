@@ -1,6 +1,6 @@
 {
   "name": "figma-multi-mcp",
-  "version": "0.1.0",
+  "version": "0.0.0-development",
   "description": "MCP proxy that routes Figma MCP tool calls across multiple accounts.",
   "license": "MIT",
   "type": "module",
@@ -17,7 +17,8 @@
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "release": "semantic-release"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.13.0",
@@ -27,9 +28,49 @@
   "devDependencies": {
     "@eslint/js": "^9.27.0",
     "@types/node": "^22.15.21",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
+    "@semantic-release/npm": "^12.0.2",
+    "@semantic-release/release-notes-generator": "^14.0.3",
     "eslint": "^9.27.0",
+    "semantic-release": "^24.2.6",
     "typescript": "^5.8.3",
     "tsx": "^4.19.4",
     "vitest": "^2.1.9"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      [
+        "@semantic-release/npm",
+        {
+          "npmPublish": true
+        }
+      ],
+      "@semantic-release/github",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "package.json",
+            "pnpm-lock.yaml",
+            "CHANGELOG.md"
+          ],
+          "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+        }
+      ]
+    ]
   }
 }
