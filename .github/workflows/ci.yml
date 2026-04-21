@@ -1,0 +1,37 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Secret scan (figd_*)
+        run: |
+          if rg -n "figd_[a-zA-Z0-9_-]+" . --glob '!.git/**' --glob '!pnpm-lock.yaml' --glob '!config/example.config.json' ; then
+            echo "Found figd_* token-like strings in repo. Refusing."
+            exit 1
+          fi
+

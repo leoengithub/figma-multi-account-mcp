@@ -1,0 +1,35 @@
+{
+  "name": "figma-multi-mcp",
+  "version": "0.1.0",
+  "description": "MCP proxy that routes Figma MCP tool calls across multiple accounts.",
+  "license": "MIT",
+  "type": "module",
+  "packageManager": "pnpm@9.15.6",
+  "bin": {
+    "figma-multi-mcp": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "dev": "tsx src/index.ts",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.13.0",
+    "pino": "^9.9.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.27.0",
+    "@types/node": "^22.15.21",
+    "eslint": "^9.27.0",
+    "typescript": "^5.8.3",
+    "tsx": "^4.19.4",
+    "vitest": "^2.1.9"
+  }
+}

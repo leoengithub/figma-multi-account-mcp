@@ -1,0 +1,12 @@
+{
+  "accounts": {
+    "work": {
+      "token": "figd_REPLACE_ME",
+      "label": "Acme Corp"
+    },
+    "personal": {
+      "token": "figd_REPLACE_ME"
+    }
+  }
+}
+

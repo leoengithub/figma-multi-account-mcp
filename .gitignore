@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.DS_Store
+
+# local secrets / overrides
+.env
+.env.*
+*.local.json
+.figma-mcp.local.json
+
+# pnpm
+.pnpm-store/
+
+# logs
+*.log
+
