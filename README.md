@@ -68,7 +68,10 @@ pnpm test
 # list configured accounts (from env/local/home config)
 pnpm dev -- --list-accounts
 
-# clear sticky context (all sessions) then exit
+# clear sticky context then exit
 pnpm dev -- --clear-context
+
+# clear a specific context key
+pnpm dev -- --clear-context --context-key session:abc123
 ```
 

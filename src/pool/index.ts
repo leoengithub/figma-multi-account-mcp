@@ -10,6 +10,7 @@ type ClientEntry = {
   process: ManagedProcess;
   // Serialize calls per upstream stdio transport.
   queue: Promise<unknown>;
+  restartAttempts: number;
 };
 
 export interface AccountPool {
@@ -32,7 +33,23 @@ export async function createAccountPool(opts: {
 
   async function ensureEntry(account: ResolvedAccount): Promise<ClientEntry> {
     const existing = entries.get(account.name);
-    if (existing) return existing;
+    if (existing) {
+      if (existing.process.state !== 'UNAVAILABLE') return existing;
+      if (existing.restartAttempts >= 3) {
+        throw accountUnavailable(account.name, 'exceeded restart limit');
+      }
+      // respawn
+      const cmd = config.mcpCommand?.[0] ?? 'npx';
+      const args = (config.mcpCommand?.slice(1) ?? ['-y', 'figma-developer-mcp', '--stdio']) as string[];
+      const proc = await spawnAccountProcess({ account, command: cmd, args, logger });
+      const next: ClientEntry = {
+        process: proc,
+        queue: existing.queue,
+        restartAttempts: existing.restartAttempts + 1,
+      };
+      entries.set(account.name, next);
+      return next;
+    }
 
     const cmd = config.mcpCommand?.[0] ?? 'npx';
     const args = (config.mcpCommand?.slice(1) ?? ['-y', 'figma-developer-mcp', '--stdio']) as string[];
@@ -44,7 +61,7 @@ export async function createAccountPool(opts: {
       logger,
     });
 
-    const entry: ClientEntry = { process: proc, queue: Promise.resolve() };
+    const entry: ClientEntry = { process: proc, queue: Promise.resolve(), restartAttempts: 0 };
     entries.set(account.name, entry);
     return entry;
   }

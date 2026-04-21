@@ -28,10 +28,8 @@ jobs:
       - name: Test
         run: pnpm test
 
-      - name: Secret scan (figd_*)
-        run: |
-          if rg -n "figd_[a-zA-Z0-9_-]+" . --glob '!.git/**' --glob '!pnpm-lock.yaml' --glob '!config/example.config.json' ; then
-            echo "Found figd_* token-like strings in repo. Refusing."
-            exit 1
-          fi
+      - name: Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

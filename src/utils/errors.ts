@@ -29,6 +29,7 @@ export function accountSelectionRequired(availableAccounts: string[]): ProxyErro
     'ACCOUNT_SELECTION_REQUIRED',
     `No Figma account selected. Please specify one of: ${availableAccounts.join(', ')}.`,
     {
+      code: 'ACCOUNT_SELECTION_REQUIRED',
       availableAccounts,
       hint: 'Pass the account name as the `account` argument on your next call. It will be remembered for the rest of this session.',
     }

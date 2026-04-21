@@ -35,7 +35,8 @@ async function main() {
   });
 
   if (flags.clearContext) {
-    contextStore.clearAll();
+    if (flags.clearContextKey) contextStore.clear(flags.clearContextKey);
+    else contextStore.clearAll();
     process.stdout.write('ok\n');
     await pool.close();
     return;

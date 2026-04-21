@@ -14,6 +14,11 @@ export async function validateAccountsOnStartup(opts: {
 }): Promise<void> {
   const { pool, registry, logger } = opts;
 
+  if (process.env.FIGMA_MULTI_MCP_SKIP_STARTUP_VALIDATION === '1') {
+    logger.warn('Skipping startup validation due to FIGMA_MULTI_MCP_SKIP_STARTUP_VALIDATION=1');
+    return;
+  }
+
   const { client } = await pool.getHealthyClientForDiscovery();
   const tools = await client.listTools();
   const hasWhoami = tools.tools.some((t) => t.name === 'whoami');
@@ -23,21 +28,15 @@ export async function validateAccountsOnStartup(opts: {
     return;
   }
 
-  const accounts = registry.listAccountNames();
-  let successes = 0;
-  await Promise.all(
-    accounts.map(async (name) => {
-      try {
-        await pool.callTool(name, 'whoami', {}, { timeoutMs: 15_000 });
-        successes += 1;
-      } catch (err) {
-        logger.warn({ account: name, err }, 'startup whoami validation failed');
-      }
-    })
-  );
+  // Keep startup light: validate only the first healthy account.
+  // This avoids eagerly spawning/validating every account (Phase 2 lazy-spawn goal).
+  const first = registry.listAccountNames()[0];
+  if (!first) return;
 
-  if (successes === 0) {
-    throw new Error('All accounts failed startup validation (whoami).');
+  try {
+    await pool.callTool(first, 'whoami', {}, { timeoutMs: 15_000 });
+  } catch (err) {
+    logger.warn({ account: first, err }, 'startup whoami validation failed');
   }
 }
 
