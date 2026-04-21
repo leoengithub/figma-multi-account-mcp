@@ -62,3 +62,13 @@ pnpm run typecheck
 pnpm test
 ```
 
+### Debug flags
+
+```bash
+# list configured accounts (from env/local/home config)
+pnpm dev -- --list-accounts
+
+# clear sticky context (all sessions) then exit
+pnpm dev -- --clear-context
+```
+

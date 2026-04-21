@@ -2,6 +2,7 @@ export interface ContextStore {
   get(scopeKey: string): string | undefined;
   set(scopeKey: string, accountName: string): void;
   clear(scopeKey: string): void;
+  clearAll(): void;
 }
 
 type Entry = {
@@ -36,6 +37,9 @@ export function createContextStore(opts: { ttlMs: number; now?: () => number }):
     },
     clear(scopeKey: string) {
       entries.delete(scopeKey);
+    },
+    clearAll() {
+      entries.clear();
     },
   };
 }
